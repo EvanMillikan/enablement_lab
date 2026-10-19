@@ -3,10 +3,13 @@
 # Get parameters passed from the job
 dbutils.widgets.text("model_version", "3", "Model Version")
 dbutils.widgets.text("endpoint_name", "example-titanic-serving-stg", "Staging Endpoint Name")
+dbutils.widgets.text("model_name", "ml_catalog.titanic_schema.titanic_model", "Model Name in Unity Catalog")
 
 model_version = dbutils.widgets.get("model_version")
+model_name = dbutils.widgets.get("model_name")
 endpoint_name = dbutils.widgets.get("endpoint_name")
 
+print(f"Deploying model name: {model_name}")
 print(f"Deploying model version: {model_version}")
 print(f"Target endpoint: {endpoint_name}")
 
@@ -24,11 +27,6 @@ deploy_client = get_deploy_client("databricks")
 # COMMAND ----------
 
 # DBTITLE 1,Get Model from Registry
-# Get the model from Unity Catalog
-CATALOG_NAME = "ml_catalog"
-SCHEMA_NAME = "titanic_schema"
-model_name = f"{CATALOG_NAME}.{SCHEMA_NAME}.example_titanic_model"
-
 try:
     model_version_details = client.get_model_version(name=model_name, version=model_version)
     print(f"✅ Found model: {model_name} version {model_version}")

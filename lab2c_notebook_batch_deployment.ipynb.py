@@ -43,7 +43,7 @@ TEST_TABLE_NAME = "test" # Load from test data; In real-life usecase, this would
 INFERENCE_RESULT_TABLE_NAME = "titanic_prediction" # output table 
 
 # Model configuration
-model_name = f"{CATALOG_NAME}.{SCHEMA_NAME}.example_titanic_model"
+model_name = f"{CATALOG_NAME}.{SCHEMA_NAME}.titanic_model"
 model_alias = "production"
 
 print(f"Source Table: {CATALOG_NAME}.{SCHEMA_NAME}.{TEST_TABLE_NAME}")

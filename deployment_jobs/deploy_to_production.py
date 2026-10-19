@@ -27,7 +27,7 @@ deploy_client = get_deploy_client("databricks")
 # Verify the model exists and has the staging alias
 CATALOG_NAME = "ml_catalog"
 SCHEMA_NAME = "titanic_schema"
-model_name = f"{CATALOG_NAME}.{SCHEMA_NAME}.example_titanic_model"
+model_name = f"{CATALOG_NAME}.{SCHEMA_NAME}.titanic_model"
 
 try:
     # Get model version details

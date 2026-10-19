@@ -9,15 +9,22 @@ dbutils.widgets.text("endpoint_name", "example-titanic-serving-stg", "Endpoint N
 dbutils.widgets.text("num_requests", "5000", "Number of Requests")
 dbutils.widgets.text("num_workers", "25", "Concurrent Workers")
 dbutils.widgets.text("p99_threshold_ms", "250", "P99 Latency Threshold (ms)")
+dbutils.widgets.text("train_table_name", "ml_catalog.titanic_schema.train", "Train Table Name")
+dbutils.widgets.text("secrets_scope", "my-secrets-evan", "Secrets Scope")
+dbutils.widgets.text("secrets_key", "databricks-token-evan", "Secrets Key")
 
 endpoint_name = dbutils.widgets.get("endpoint_name")
 num_requests = int(dbutils.widgets.get("num_requests"))
 num_workers = int(dbutils.widgets.get("num_workers"))
 p99_threshold_ms = float(dbutils.widgets.get("p99_threshold_ms"))
+train_table_name = dbutils.widgets.get("train_table_name")
+secrets_scope = dbutils.widgets.get("secrets_scope")
+secrets_key = dbutils.widgets.get("secrets_key")
 
 print(f"Testing endpoint: {endpoint_name}")
 print(f"Load test: {num_requests} requests with {num_workers} workers")
 print(f"P99 threshold: {p99_threshold_ms}ms")
+print(f"Train Table Name: {train_table_name}ms")
 
 # COMMAND ----------
 
@@ -32,11 +39,7 @@ import pandas as pd
 # COMMAND ----------
 
 # DBTITLE 1,Prepare Test Data
-CATALOG_NAME = "ml_catalog"
-SCHEMA_NAME = "titanic_schema"
-TRAIN_TABLE_NAME = "train"
-
-train = spark.table(f"{CATALOG_NAME}.{SCHEMA_NAME}.{TRAIN_TABLE_NAME}").toPandas()
+train = spark.table(train_table_name).toPandas()
 features = ["Fare", "Age", "Pclass", "SibSp", "Parch", "Sex"] 
 X = train[features]
 y = train["Survived"]
@@ -52,7 +55,7 @@ print("Test payload prepared")
 
 # DBTITLE 1,Setup Endpoint Connection
 # Get authentication token
-token = dbutils.secrets.get(scope='my-secrets', key='databricks-token')
+token = dbutils.secrets.get(scope=secrets_scope, key=secrets_key) # change with your token
 
 # Construct endpoint URL
 workspace_url = spark.conf.get("spark.databricks.workspaceUrl")

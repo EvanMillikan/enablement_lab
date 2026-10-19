@@ -24,6 +24,16 @@
 
 # COMMAND ----------
 
+model_name = dbutils.widgets.get("model_name")
+model_version = dbutils.widgets.get("model_version")
+
+# by default, the approval tag name here is populated with the approval task name
+tag_name = dbutils.widgets.get("approval_tag_name")
+endpoint_name = dbutils.widgets.get("endpoint_name")
+
+
+# COMMAND ----------
+
 # DBTITLE 1,Retrieve Test Results
 import json
 
@@ -41,7 +51,7 @@ except Exception as e:
     print(f"Running in debug mode (not part of job run)")
     # Mock data for testing the notebook independently
     test_results = {
-        "endpoint_name": "example-titanic-serving-stg",
+        "endpoint_name": endpoint_name,
         "num_requests": 5000,
         "num_workers": 25,
         "total_time_sec": 45.2,
@@ -106,7 +116,7 @@ print("="*70)
 
 print("\n📧 Approval Required Notification")
 print("Send this information to your deployment approvers:")
-print(f"\nSubject: Approval Required - Model v{dbutils.widgets.get('model_version')} Staging Validation Complete")
+print(f"\nSubject: Approval Required - Model v{model_version} Staging Validation Complete")
 print(f"\nStaging validation completed successfully.")
 print(f"Review results and approve for production deployment.")
 print(f"\nTest Summary:")
@@ -121,11 +131,6 @@ print(f"\nAction: Manually change approval_tag_name to 'Approved' to continue de
 from mlflow import MlflowClient
 
 client = MlflowClient(registry_uri="databricks-uc")
-model_name = dbutils.widgets.get("model_name")
-model_version = dbutils.widgets.get("model_version")
-
-# by default, the approval tag name here is populated with the approval task name
-tag_name = dbutils.widgets.get("approval_tag_name")
 
 # fetch the model version's UC tags
 tags = client.get_model_version(model_name, model_version).tags
